@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro</title>
+    <link rel="stylesheet" href="assets/styles/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+
+    <header class="pomodoro-header-conteiner">
+        <h1 class="app-title">pomodoro.</h1>
+        <div class="settings-btn-box">
+            <i id="settingsButton" class="ri-settings-4-line"></i>
+        </div>
+    </header>
+
+    <main class="pomodoro-main-conteiner">
+
+
+        <div class="pomodoro-app-header-buttons-content">
+
+            <button class="btn-header selected">Focus!</button>
+            <button class="btn-header">Break</button>
+            <button class="btn-header">Long Break</button>
+
+        </div>
+
+        <div class="pomodoro-timer-container">
+            <p class="app-timer-text"><span id="minutesTimer">25</span>:<span id="secondsTimer">00</span></p>
+        </div>
+
+        <div class="pomodoro-app-footer-buttons-content">
+            <button id="startButton" class="btn-footer">Iniciar</button>
+            <button class="btn-footer-short"><i id="resetButton" class="ri-reset-left-line"></i></button>
+        </div>
+
+    </main>
+
+    <script src="assets/scripts/app.js"></script>
+</body>
+</html>

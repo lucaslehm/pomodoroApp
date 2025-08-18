@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+    color: #fff;
+}
+
+:root {
+    --cor01: #c6c6f8;
+    --cor02: #f0f0f8;
+    --cor03: #161631;
+    --cor04: #c2c2d8;
+}
+
+body {
+    background-color: var(--cor01);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.pomodoro-header-conteiner {
+    display: flex;
+    align-items: center;
+    width: 540px;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+.app-title {
+    color: var(--cor03);
+    font-weight: 800;
+    font-size: 2.3em;
+}
+
+.settings-btn-box {
+    background-color: var(--cor02);
+    padding: .3em;
+    border-radius: .3em;
+    border: solid 2px var(--cor03);
+    box-shadow: 3px 3px 0px var(--cor03);
+    cursor: pointer;
+}
+
+#settingsButton {
+    font-size: 1.5em;
+    color: var(--cor03);
+}
+
+.pomodoro-main-conteiner {
+    width: 570px;
+    padding: 3em;
+    background-color: var(--cor02);
+    border-radius: 1em;
+    border: solid 3px var(--cor03);
+    box-shadow: 5px 5px 0px var(--cor03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+}
+
+.pomodoro-app-header-buttons-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2em;
+}
+
+.btn-header {
+    color: var(--cor03);
+    border: none;
+    outline: none;
+    font-size: 1em;
+    font-weight: 600;
+    padding: .5em 2em;
+    background-color: var(--cor02);
+    border-radius: .5em;
+    border: solid 2px var(--cor03);
+    box-shadow: 3px 3px 0px var(--cor03);
+    cursor: pointer;
+}
+
+.btn-header.selected {
+    background-color: var(--cor04);
+}
+
+
+.app-timer-text {
+    color: var(--cor03);
+    font-weight: 900;
+    font-size: 7em;
+}
+
+.pomodoro-app-footer-buttons-content {
+    display: flex;
+    gap: 1em;
+}
+
+.btn-footer {
+    color: var(--cor03);
+    border: none;
+    outline: none;
+    font-size: 1.3em;
+    font-weight: 800;
+    padding: .5em 3em;
+    background-color: var(--cor02);
+    border-radius: .3em;
+    border: solid 2px var(--cor03);
+    box-shadow: 3px 3px 0px var(--cor03);
+    cursor: pointer;
+}
+
+
+.btn-footer-short {
+    background-color: var(--cor02);
+    padding: .3em .8em;
+    border-radius: .3em;
+    border: solid 2px var(--cor03);
+    box-shadow: 3px 3px 0px var(--cor03);
+    cursor: pointer;
+}
+
+#resetButton {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--cor03);
+}
+
+button:active {
+    background-color: var(--cor04) ;
+    transform: translate(4%, 4%);
+}
+
+
+#minutesTimer,
+#secondsTimer {
+    color: var(--cor03);
+}
