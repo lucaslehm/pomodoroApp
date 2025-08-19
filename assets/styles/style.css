@@ -14,19 +14,8 @@
     --cor02: #f0f0f8;
     --cor03: #161631;
     --cor04: #c2c2d8;
-
-    /*Break collor pallet*/
-    --cor01: #c6c6f8;
-    --cor02: #f0f0f8;
-    --cor03: #161631;
-    --cor04: #c2c2d8;
-
-    /*LongBreak collor pallet*/
-    --cor01: #c6c6f8;
-    --cor02: #f0f0f8;
-    --cor03: #161631;
-    --cor04: #c2c2d8;
 }
+    
 
 body {
     background-color: var(--cor01);
@@ -153,5 +142,10 @@ button:active {
 
 #minutesTimer,
 #secondsTimer {
+    color: var(--cor03);
+}
+
+.ri-pause-line {
+    font-weight: 900;
     color: var(--cor03);
 }

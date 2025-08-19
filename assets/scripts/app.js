@@ -1,33 +1,174 @@
 const appData = {
+
+    // Page Title Field
+    titleField: () => document.querySelector('title'),
+
     // Timer Fields
+    timerText: () => document.querySelector('.app-timer-text'),
     minutesField: () => document.querySelector('#minutesTimer'),
     secondsField: () => document.querySelector('#secondsTimer'),
 
     // Buttons
     startBtn: () => document.querySelector('#startButton'),
+    pauseButton: () => document.querySelector('#pauseButton'),
+    resetButton: () => document.querySelector('#resetButton'),
+
+    // HeaderButtons
+    headerBtnsBox: () => document.querySelector('.pomodoro-app-header-buttons-content'),
     focusBtn: () => document.querySelector('#btnFocus'),
     breakBtn: () => document.querySelector('#btnBreak'),
     longBreakBtn: () => document.querySelector('#btnLongBreak'),
-
-    // Timer
-    timerText: () => document.querySelector('.app-timer-text')
 }
 
+function updatePageTitle(message, min, sec) {
 
-let minutes = 25
-let seconds = 0
+    // se eu receber algum codigo de mensagem, execute, se nao, 
 
+
+    if(message == '0') {
+       appData.titleField().innerHTML = 'Time to Focus!'
+       return
+    }
+
+    if(message == '1') {
+       appData.titleField().innerHTML = 'Time to Break!'
+       return
+    }
+
+    if(message == '2') {
+       appData.titleField().innerHTML = 'Time to Relax!'
+       return
+    }
+
+
+    if (typeOfTimer(headerButttons) === '0') {
+        appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | Focus`
+    }
+
+    if (typeOfTimer(headerButttons) === '1') {
+        appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | Break`
+    }
+
+    if (typeOfTimer(headerButttons) === '2') {
+        appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | LongBreak`
+    }
+
+    
+}
+
+let minutes = 0
+let seconds = 10
+
+let pauseState = false
+let resetState = false
+
+let breakCounter = 2
+
+const headerButttons = appData.headerBtnsBox().querySelectorAll('button')
+
+// Chama a funcao principal
+appData.startBtn().addEventListener('click', function (e) {
+    playClickSound()
+    pauseState = false
+    resetState = false
+    startTimer()
+    hideButton(appData.startBtn())
+    showButton(appData.pauseButton())
+})
+
+// Chama a funcao pause
+appData.pauseButton().addEventListener('click', function (e) {
+    playClickSound()
+    pauseTimer()
+    hideButton(appData.pauseButton())
+    showButton(appData.startBtn())
+})
+
+// Reset
+appData.resetButton().addEventListener('click', function (e) {
+    playClickSound()
+    resetState = true
+    clearInterval(timer)
+    timer = null
+    resetTimerFields()
+    hideButton(appData.pauseButton())
+    showButton(appData.startBtn())
+})
+
+function pauseTimer() {
+    pauseState = true
+}
+
+// Liga o timer
 function startTimer() {
 
-    const timer = setInterval(function () {
-        appData.minutesField().innerText = zeroLeft(minutes)
-        appData.secondsField().innerText = zeroLeft(seconds)
+    timer = setInterval(function () {
 
-        // Verificar se o tempo acabou
-        if (minutes === 0 && seconds === 0) {
+        if (pauseState) {
             clearInterval(timer)
-            resetTimerFields()
             return
+        }
+
+        if (resetState) {
+            clearInterval(timer)
+            return
+        }
+
+
+        // Tempo acaba
+        if (minutes === 0 && seconds === 0) {
+
+            playTimerSound()
+            clearInterval(timer)
+
+            if (typeOfTimer(headerButttons) == '0') { // focus
+                breakCounter++
+                if (breakCounter === 3) {
+                    // ir para o longbreak
+                    updatePageTitle('2')
+                    hideButton(appData.pauseButton())
+                    showButton(appData.startBtn())
+                    toggleSelectedClassButtons(appData.longBreakBtn())
+                    changeTime('2')
+                    tradeColors('2')
+                    breakCounter = 0
+                    return
+                } else {
+                    // ir para o break
+                    updatePageTitle('1')
+                    hideButton(appData.pauseButton())
+                    showButton(appData.startBtn())
+                    toggleSelectedClassButtons(appData.breakBtn())
+                    changeTime('1')
+                    tradeColors('1')
+                    return
+                }
+                
+
+            }
+
+            if (typeOfTimer(headerButttons) == '1') { // break
+                updatePageTitle('0')
+                hideButton(appData.pauseButton())
+                showButton(appData.startBtn())
+                toggleSelectedClassButtons(appData.focusBtn())
+                changeTime('0')
+                tradeColors('0')
+                return
+            }
+
+            if (typeOfTimer(headerButttons) == '2') { // longbreak
+                updatePageTitle('0')
+                hideButton(appData.pauseButton())
+                showButton(appData.startBtn())
+                toggleSelectedClassButtons(appData.focusBtn())
+                changeTime('0')
+                tradeColors('0')
+                return
+            }
+
+            return
+
         }
 
         // Contador de tempo
@@ -38,49 +179,71 @@ function startTimer() {
             seconds--
         }
 
+        
+        updatePageTitle(undefined, minutes, seconds)
+        appData.minutesField().innerText = zeroLeft(minutes)
+        appData.secondsField().innerText = zeroLeft(seconds)
+
     }, 1000)
+
+}
+
+function showButton(btn) {
+    btn.style.display = 'block'
+}
+
+function hideButton(btn) {
+    btn.style.display = 'none'
+}
+
+function typeOfTimer(types) {
+    for (let type of types) {
+        if (type.classList.contains('selected')) {
+            return type.value
+        }
+    }
 }
 
 // Clicou no Focus
 appData.focusBtn().addEventListener('click', e => {
-    // arrumar o select
+    playClickSound()
     toggleSelectedClassButtons(appData.focusBtn())
-    changeTime('Focus')
-
-    // colocar o tempo certo
+    changeTime(typeOfTimer(headerButttons))
+    tradeColors(typeOfTimer(headerButttons))
 })
 
 // Clicou no break
 appData.breakBtn().addEventListener('click', e => {
-    // arrumar o select
+    playClickSound()
     toggleSelectedClassButtons(appData.breakBtn())
-    changeTime('Break')
+    changeTime(typeOfTimer(headerButttons))
+    tradeColors(typeOfTimer(headerButttons))
 })
 
 // Clicou no LongBreak
 appData.longBreakBtn().addEventListener('click', e => {
-    // arrumar o select
+    playClickSound()
     toggleSelectedClassButtons(appData.longBreakBtn())
-    changeTime('LongBreak')
-    
+    changeTime(typeOfTimer(headerButttons))
+    tradeColors(typeOfTimer(headerButttons))
 })
 
 
 // Arruma o tempo quando clicar nos botoes
 function changeTime(type) {
-    if (type === 'Focus') {
+    if (type === '0') {
         minutes = 25
         seconds = 0
         setTimer(minutes, seconds)
     }
 
-    if (type === 'Break') {
+    if (type === '1') {
         minutes = 5
         seconds = 0
         setTimer(minutes, seconds)
     }
 
-    if (type === 'LongBreak') {
+    if (type === '2') {
         minutes = 15
         seconds = 0
         setTimer(minutes, seconds)
@@ -108,21 +271,74 @@ function zeroLeft(value) {
 }
 
 function resetTimerFields() {
-    appData.minutesField().innerText = '25'
-    appData.secondsField().innerText = '00'
+    const tipoAtual = typeOfTimer(headerButttons)
+    changeTime(tipoAtual)
 }
 
-appData.startBtn().addEventListener('click', function(e) {
-    startTimer()
-})
+
+
+function tradeColors(type) {
+    const root = document.documentElement
+
+    if (type === '0') {
+        root.style.setProperty('--cor01', '#c6c6f8');
+        root.style.setProperty('--cor02', '#f0f0f8');
+        root.style.setProperty('--cor03', '#161631');
+        root.style.setProperty('--cor04', '#c2c2d8');
+    }
+
+    if (type === '1') {
+        root.style.setProperty('--cor01', '#c6f8d9');
+        root.style.setProperty('--cor02', '#f4f8f0');
+        root.style.setProperty('--cor03', '#162b31');
+        root.style.setProperty('--cor04', '#c2d8cf');
+
+    }
+
+    if (type === '2') {
+        root.style.setProperty('--cor01', '#f5f8c6');
+        root.style.setProperty('--cor02', '#f8f6f0');
+        root.style.setProperty('--cor03', '#312416');
+        root.style.setProperty('--cor04', '#d8d6c2');
+    }
+
+}
+
+const clickSound = new Audio()
+clickSound.src = '../assets/sounds/click.mp3'
+clickSound.type = 'audio/mpeg'
+
+function playClickSound() {
+    // Evita sobreposição de sons se clicar rápido
+    if (!clickSound.paused) {
+        clickSound.pause()
+        clickSound.currentTime = 0
+    }
+    clickSound.play().catch(err => {
+        // Alguns navegadores bloqueiam autoplay sem interação
+        console.warn('Erro ao reproduzir som:', err)
+    })
+}
+
+const timerSound = new Audio()
+timerSound.src = '../assets/sounds/timerEnd.mp3'
+timerSound.type = 'audio/mpeg'
+
+function playTimerSound() {
+    // Evita sobreposição de sons se clicar rápido
+    if (!timerSound.paused) {
+        timerSound.pause()
+        timerSound.currentTime = 0
+    }
+    timerSound.play().catch(err => {
+        // Alguns navegadores bloqueiam autoplay sem interação
+        console.warn('Erro ao reproduzir som:', err)
+    })
+}
+
 
 // Proximas funcionaliades:
 
-// mudar a cor quando trocar de tipo
-// funcao pausar
-// guardar informacoes de tempo no localstorage
-// adcionar sons aos botoes
-// funcionalidade do reset
 // dialog do settings
-// colocar como titulo da pagina
+// guardar informacoes de tempo no localstorage
 // refatorar e debugar

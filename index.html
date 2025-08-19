@@ -18,12 +18,11 @@
 
     <main class="pomodoro-main-conteiner">
 
-
         <div class="pomodoro-app-header-buttons-content">
 
-            <button id="btnFocus" class="btn-header selected">Focus!</button>
-            <button id="btnBreak" class="btn-header">Break</button>
-            <button id="btnLongBreak" class="btn-header">Long Break</button>
+            <button id="btnFocus" class="btn-header selected" value="0">Focus</button>
+            <button id="btnBreak" class="btn-header" value="1">Break</button>
+            <button id="btnLongBreak" class="btn-header" value="2">Long Break</button>
 
         </div>
 
@@ -33,6 +32,7 @@
 
         <div class="pomodoro-app-footer-buttons-content">
             <button id="startButton" class="btn-footer">Iniciar</button>
+            <button id="pauseButton" class="btn-footer" style="display: none;"><i class="ri-pause-line"></i></button>
             <button class="btn-footer-short"><i id="resetButton" class="ri-reset-left-line"></i></button>
         </div>
 
