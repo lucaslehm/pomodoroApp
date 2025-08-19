@@ -25,10 +25,15 @@ O aplicativo permite controlar ciclos de **foco**, **pausa curta** e **pausa lon
 
 ---
 
-## 🖥️ Deploy
+## 🚀 Demo
 
-O projeto está disponível online:  
-👉 [Acessar Pomodoro Timer](https://pomodoro-app-pink-psi.vercel.app/)
+🔗 [Clique aqui para ver o projeto online](https://pomodoro-app-pink-psi.vercel.app/)
+
+---
+
+## 🖼️ Preview
+
+![Preview do projeto](./assets/images/preview.png)
 
 ---
 
