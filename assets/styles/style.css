@@ -322,3 +322,22 @@ input[type=number]::-webkit-outer-spin-button {
         gap: 2em;
     }
 }
+
+footer {
+    margin-top: 1.2em;
+    padding: .5em 3em;
+    background-color: var(--cor02);
+    border-radius: .6em;
+    border: solid 2px var(--cor03);
+    box-shadow: 3px 3px 0px var(--cor03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+}
+
+footer > p,
+footer > p > a {
+    font-weight: bold;
+    color: var(--cor03);
+}
