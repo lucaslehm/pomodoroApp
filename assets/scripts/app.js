@@ -1,5 +1,4 @@
-// Variaveis globais
-// Estado global dos timers
+// Variaveis globais do sistema
 let timerSettings = {
     pomodoro: 25,
     break: 5,
@@ -15,6 +14,9 @@ let resetState = false
 let breakCounter = 0
 
 
+let timer
+
+// Dados do conteudo principal
 const appData = {
     // Page Title Field
     titleField: () => document.querySelector('title'),
@@ -51,6 +53,31 @@ const modal = {
     longBreakTimerSet: () => document.querySelector('#longBreakTimerSet')
 }
 
+const typeMap = {
+    '0': 'pomodoro',
+    '1': 'break',
+    '2': 'longBreak'
+}
+
+const colorThemes = {
+    '0': { cor01: '#c6c6f8', cor02: '#f0f0f8', cor03: '#161631', cor04: '#c2c2d8' },
+    '1': { cor01: '#c6f8d9', cor02: '#f4f8f0', cor03: '#162b31', cor04: '#c2d8cf' },
+    '2': { cor01: '#f5f8c6', cor02: '#f8f6f0', cor03: '#312416', cor04: '#d8d6c2' }
+}
+
+const buttonActions = [
+    { btn: appData.focusBtn, type: '0' },
+    { btn: appData.breakBtn, type: '1' },
+    { btn: appData.longBreakBtn, type: '2' }
+]
+
+const titles = {
+    '0': 'Focus',
+    '1': 'Break',
+    '2': 'LongBreak'
+}
+
+
 // Settings Dialog
 appData.settingsBtn().addEventListener('click', function () {
     playClickSound()
@@ -69,22 +96,28 @@ modal.updateSettings().addEventListener('click', function (e) {
     playClickSound()
     e.preventDefault()
 
-    let pomodoroTime = modal.pomodoroTimerSet().value
-    let breakTime = modal.breakTimerSet().value
-    let longBreakTime = modal.longBreakTimerSet().value
+    const pomodoroTime = modal.pomodoroTimerSet().value
+    const breakTime = modal.breakTimerSet().value
+    const longBreakTime = modal.longBreakTimerSet().value
 
-    if (pomodoroTime !== '') {
-        timerSettings.pomodoro = Number(pomodoroTime)
-        setTimer(timerSettings.pomodoro, seconds)
-    }
+    if (pomodoroTime !== '') timerSettings.pomodoro = Number(pomodoroTime)
+    if (breakTime !== '') timerSettings.break = Number(breakTime)
+    if (longBreakTime !== '') timerSettings.longBreak = Number(longBreakTime)
 
-    if (breakTime !== '') {
-        timerSettings.break = Number(breakTime)
-    }
+    // parar qualquer timer ativo
+    clearInterval(timer)
+    pauseState = false
+    resetState = false
 
-    if (longBreakTime !== '') {
-        timerSettings.longBreak = Number(longBreakTime)
-    }
+    // volta o botão para "Start"
+    hideButton(appData.pauseButton())
+    showButton(appData.startBtn())
+
+    // reseta o contador para o estado atual
+    const type = typeOfTimer(headerButttons) // '0', '1' ou '2'
+    changeTime(type)
+
+    updatePageTitle(type)
 
     saveTimerState()
     alert('Dados atualizados com sucesso!')
@@ -93,23 +126,12 @@ modal.updateSettings().addEventListener('click', function (e) {
 
 
 function changeTime(type) {
-    if (type === '0') { // focus
-        minutes = timerSettings.pomodoro
-        seconds = 0
-        setTimer(minutes, seconds)
-    }
+    const key = typeMap[type]
+    if (!key) return
 
-    if (type === '1') { // break
-        minutes = timerSettings.break
-        seconds = 0
-        setTimer(minutes, seconds)
-    }
-
-    if (type === '2') { // long break
-        minutes = timerSettings.longBreak
-        seconds = 0
-        setTimer(minutes, seconds)
-    }
+    minutes = timerSettings[key]
+    seconds = 0
+    setTimer(minutes, seconds)
 }
 
 function showHideModal() {
@@ -117,34 +139,14 @@ function showHideModal() {
 }
 
 function updatePageTitle(message, min, sec) {
-    // se eu receber algum codigo de mensagem, execute, se nao, 
-    if (message == '0') {
-        appData.titleField().innerHTML = 'Time to Focus!'
+    if (message !== undefined) {
+        const map = { '0': 'Time to Focus!', '1': 'Time to Break!', '2': 'Time to Relax!' }
+        appData.titleField().innerHTML = map[message] || ''
         return
     }
 
-    if (message == '1') {
-        appData.titleField().innerHTML = 'Time to Break!'
-        return
-    }
-
-    if (message == '2') {
-        appData.titleField().innerHTML = 'Time to Relax!'
-        return
-    }
-
-    if (typeOfTimer(headerButttons) === '0') {
-        appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | Focus`
-    }
-
-    if (typeOfTimer(headerButttons) === '1') {
-        appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | Break`
-    }
-
-    if (typeOfTimer(headerButttons) === '2') {
-        appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | LongBreak`
-    }
-
+    const type = typeOfTimer(headerButttons)
+    appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | ${titles[type]}`
 }
 
 // Chama a funcao principal
@@ -180,94 +182,76 @@ function pauseTimer() {
     pauseState = true
 }
 
+function switchMode(type, resetBreakCounter = false) {
+    updatePageTitle(type)
+    hideButton(appData.pauseButton())
+    showButton(appData.startBtn())
+
+    const btnMap = {
+        '0': appData.focusBtn,
+        '1': appData.breakBtn,
+        '2': appData.longBreakBtn
+    }
+
+    toggleSelectedClassButtons(btnMap[type]())
+    changeTime(type)
+    tradeColors(type)
+
+    if (resetBreakCounter) breakCounter = 0
+}
+
 // Liga o timer
 function startTimer() {
+    timer = setInterval(() => {
 
-    timer = setInterval(function () {
-
-        if (pauseState) {
+        // Verifica pause/reset
+        if (pauseState || resetState) {
             clearInterval(timer)
             return
         }
 
-        if (resetState) {
-            clearInterval(timer)
-            return
-        }
-
-
-        // Tempo acaba
+        // Quando o tempo acaba
         if (minutes === 0 && seconds === 0) {
-
             playTimerSound()
             clearInterval(timer)
 
-            if (typeOfTimer(headerButttons) == '0') { // focus
+            const type = typeOfTimer(headerButttons)
+
+            if (type === '0') { // focus
                 breakCounter++
                 if (breakCounter === 3) {
-                    // ir para o longbreak
-                    updatePageTitle('2')
-                    hideButton(appData.pauseButton())
-                    showButton(appData.startBtn())
-                    toggleSelectedClassButtons(appData.longBreakBtn())
-                    changeTime('2')
-                    tradeColors('2')
-                    breakCounter = 0
-                    return
+                    switchMode('2', true) // longbreak
                 } else {
-                    // ir para o break
-                    updatePageTitle('1')
-                    hideButton(appData.pauseButton())
-                    showButton(appData.startBtn())
-                    toggleSelectedClassButtons(appData.breakBtn())
-                    changeTime('1')
-                    tradeColors('1')
-                    return
+                    switchMode('1') // break
                 }
-
-
-            }
-
-            if (typeOfTimer(headerButttons) == '1') { // break
-                updatePageTitle('0')
-                hideButton(appData.pauseButton())
-                showButton(appData.startBtn())
-                toggleSelectedClassButtons(appData.focusBtn())
-                changeTime('0')
-                tradeColors('0')
                 return
             }
 
-            if (typeOfTimer(headerButttons) == '2') { // longbreak
-                updatePageTitle('0')
-                hideButton(appData.pauseButton())
-                showButton(appData.startBtn())
-                toggleSelectedClassButtons(appData.focusBtn())
-                changeTime('0')
-                tradeColors('0')
+            if (type === '1') { // break
+                switchMode('0') // volta pro focus
+                return
+            }
+
+            if (type === '2') { // longbreak
+                switchMode('0') // volta pro focus
                 return
             }
 
             return
-
         }
 
-        // Contador de tempo
-        if (seconds === 0) {
+        // Contador do tempo
+        if (--seconds < 0) {
             minutes--
             seconds = 59
-        } else {
-            seconds--
         }
-
 
         updatePageTitle(undefined, minutes, seconds)
         appData.minutesField().innerText = zeroLeft(minutes)
         appData.secondsField().innerText = zeroLeft(seconds)
-
     }, 1000)
-
 }
+
 
 function showButton(btn) {
     btn.style.display = 'block'
@@ -285,28 +269,13 @@ function typeOfTimer(types) {
     }
 }
 
-// Clicou no Focus
-appData.focusBtn().addEventListener('click', e => {
-    playClickSound()
-    toggleSelectedClassButtons(appData.focusBtn())
-    changeTime(typeOfTimer(headerButttons),)
-    tradeColors(typeOfTimer(headerButttons))
-})
-
-// Clicou no break
-appData.breakBtn().addEventListener('click', e => {
-    playClickSound()
-    toggleSelectedClassButtons(appData.breakBtn())
-    changeTime(typeOfTimer(headerButttons))
-    tradeColors(typeOfTimer(headerButttons))
-})
-
-// Clicou no LongBreak
-appData.longBreakBtn().addEventListener('click', e => {
-    playClickSound()
-    toggleSelectedClassButtons(appData.longBreakBtn())
-    changeTime(typeOfTimer(headerButttons))
-    tradeColors(typeOfTimer(headerButttons))
+buttonActions.forEach(({ btn, type }) => {
+    btn().addEventListener('click', () => {
+        playClickSound()
+        toggleSelectedClassButtons(btn())
+        changeTime(type)
+        tradeColors(type)
+    })
 })
 
 // Seta o tempo no html
@@ -337,30 +306,15 @@ function resetTimerFields() {
 
 function tradeColors(type) {
     const root = document.documentElement
+    const theme = colorThemes[type]
 
-    if (type === '0') {
-        root.style.setProperty('--cor01', '#c6c6f8');
-        root.style.setProperty('--cor02', '#f0f0f8');
-        root.style.setProperty('--cor03', '#161631');
-        root.style.setProperty('--cor04', '#c2c2d8');
-    }
+    if (!theme) return
 
-    if (type === '1') {
-        root.style.setProperty('--cor01', '#c6f8d9');
-        root.style.setProperty('--cor02', '#f4f8f0');
-        root.style.setProperty('--cor03', '#162b31');
-        root.style.setProperty('--cor04', '#c2d8cf');
-
-    }
-
-    if (type === '2') {
-        root.style.setProperty('--cor01', '#f5f8c6');
-        root.style.setProperty('--cor02', '#f8f6f0');
-        root.style.setProperty('--cor03', '#312416');
-        root.style.setProperty('--cor04', '#d8d6c2');
-    }
-
+    Object.entries(theme).forEach(([key, value]) => {
+        root.style.setProperty(`--${key}`, value)
+    })
 }
+
 
 const clickSound = new Audio()
 clickSound.src = '../assets/sounds/click.mp3'
@@ -417,6 +371,3 @@ function recoverTimerState() {
     seconds = 0
     setTimer(minutes, seconds)
 }
-
-// Proximas funcionaliades:
-// refatorar e debugar

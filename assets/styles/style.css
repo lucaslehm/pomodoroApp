@@ -16,7 +16,7 @@
     --cor04: #c2c2d8;
     --cor05: #e03f39;
 }
-    
+
 
 body {
     background-color: var(--cor01);
@@ -140,7 +140,7 @@ button:active {
     transform: translate(4%, 4%);
 }
 
-.settings-btn-box:active{
+.settings-btn-box:active {
     background-color: var(--cor04);
     transform: translate(4%, 4%);
 }
@@ -249,8 +249,8 @@ button:active {
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 
@@ -280,4 +280,45 @@ input[type=number]::-webkit-outer-spin-button {
     font-weight: bold;
     font-size: .8em;
     color: var(--cor05);
+}
+
+@media screen and (max-width: 380px) {
+    body {
+        background-color: var(--cor02);
+    }
+
+    .settings-box-container {
+        width: 320px;
+    }
+
+    .btn-header {
+        font-size: .9em;
+        padding: .5em 1em;
+        border-radius: .5em;
+        border: solid 2px var(--cor03);
+        box-shadow: 3px 3px 0px var(--cor03);
+    }
+
+    .pomodoro-header-conteiner {
+        width: 300px;
+    }
+
+    .pomodoro-app-header-buttons-content {
+        gap: 1em;
+        width: 300px;
+    }
+
+
+    .pomodoro-main-conteiner {
+        width: 300px;
+        padding: 1em;
+        background-color: var(--cor02);
+        border-radius: 0;
+        border: none;
+        box-shadow: 0px 0px 0px transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2em;
+    }
 }
