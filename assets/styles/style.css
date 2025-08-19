@@ -9,6 +9,19 @@
 }
 
 :root {
+    /*Focus collor pallet*/
+    --cor01: #c6c6f8;
+    --cor02: #f0f0f8;
+    --cor03: #161631;
+    --cor04: #c2c2d8;
+
+    /*Break collor pallet*/
+    --cor01: #c6c6f8;
+    --cor02: #f0f0f8;
+    --cor03: #161631;
+    --cor04: #c2c2d8;
+
+    /*LongBreak collor pallet*/
     --cor01: #c6c6f8;
     --cor02: #f0f0f8;
     --cor03: #161631;
@@ -133,7 +146,7 @@ body {
 }
 
 button:active {
-    background-color: var(--cor04) ;
+    background-color: var(--cor04);
     transform: translate(4%, 4%);
 }
 
