@@ -1,5 +1,21 @@
-const appData = {
+// Variaveis globais
+// Estado global dos timers
+let timerSettings = {
+    pomodoro: 25,
+    break: 5,
+    longBreak: 15
+}
 
+let minutes = timerSettings.pomodoro
+let seconds = 0
+
+let pauseState = false
+let resetState = false
+
+let breakCounter = 0
+
+
+const appData = {
     // Page Title Field
     titleField: () => document.querySelector('title'),
 
@@ -12,6 +28,7 @@ const appData = {
     startBtn: () => document.querySelector('#startButton'),
     pauseButton: () => document.querySelector('#pauseButton'),
     resetButton: () => document.querySelector('#resetButton'),
+    settingsBtn: () => document.querySelector('#settingsButton'),
 
     // HeaderButtons
     headerBtnsBox: () => document.querySelector('.pomodoro-app-header-buttons-content'),
@@ -20,26 +37,101 @@ const appData = {
     longBreakBtn: () => document.querySelector('#btnLongBreak'),
 }
 
+const headerButttons = appData.headerBtnsBox().querySelectorAll('button')
+
+// Modal Fields
+const modal = {
+    settings: () => document.querySelector('.settings-dialog'),
+    backButton: () => document.querySelector('#backButton'),
+    updateSettings: () => document.querySelector('#updateSettingsButton'),
+
+    // inputs
+    pomodoroTimerSet: () => document.querySelector('#pomodoroTimerSet'),
+    breakTimerSet: () => document.querySelector('#breakTimerSet'),
+    longBreakTimerSet: () => document.querySelector('#longBreakTimerSet')
+}
+
+// Settings Dialog
+appData.settingsBtn().addEventListener('click', function () {
+    playClickSound()
+    showHideModal()
+})
+
+modal.backButton().addEventListener('click', function () {
+    playClickSound()
+    showHideModal()
+})
+
+recoverTimerState()
+
+// Atualizar dados do timer conforme os inputs do settings
+modal.updateSettings().addEventListener('click', function (e) {
+    playClickSound()
+    e.preventDefault()
+
+    let pomodoroTime = modal.pomodoroTimerSet().value
+    let breakTime = modal.breakTimerSet().value
+    let longBreakTime = modal.longBreakTimerSet().value
+
+    if (pomodoroTime !== '') {
+        timerSettings.pomodoro = Number(pomodoroTime)
+        setTimer(timerSettings.pomodoro, seconds)
+    }
+
+    if (breakTime !== '') {
+        timerSettings.break = Number(breakTime)
+    }
+
+    if (longBreakTime !== '') {
+        timerSettings.longBreak = Number(longBreakTime)
+    }
+
+    saveTimerState()
+    alert('Dados atualizados com sucesso!')
+    showHideModal()
+})
+
+
+function changeTime(type) {
+    if (type === '0') { // focus
+        minutes = timerSettings.pomodoro
+        seconds = 0
+        setTimer(minutes, seconds)
+    }
+
+    if (type === '1') { // break
+        minutes = timerSettings.break
+        seconds = 0
+        setTimer(minutes, seconds)
+    }
+
+    if (type === '2') { // long break
+        minutes = timerSettings.longBreak
+        seconds = 0
+        setTimer(minutes, seconds)
+    }
+}
+
+function showHideModal() {
+    modal.settings().style.display = modal.settings().style.display === 'flex' ? 'none' : 'flex'
+}
+
 function updatePageTitle(message, min, sec) {
-
     // se eu receber algum codigo de mensagem, execute, se nao, 
-
-
-    if(message == '0') {
-       appData.titleField().innerHTML = 'Time to Focus!'
-       return
+    if (message == '0') {
+        appData.titleField().innerHTML = 'Time to Focus!'
+        return
     }
 
-    if(message == '1') {
-       appData.titleField().innerHTML = 'Time to Break!'
-       return
+    if (message == '1') {
+        appData.titleField().innerHTML = 'Time to Break!'
+        return
     }
 
-    if(message == '2') {
-       appData.titleField().innerHTML = 'Time to Relax!'
-       return
+    if (message == '2') {
+        appData.titleField().innerHTML = 'Time to Relax!'
+        return
     }
-
 
     if (typeOfTimer(headerButttons) === '0') {
         appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | Focus`
@@ -53,18 +145,7 @@ function updatePageTitle(message, min, sec) {
         appData.titleField().innerHTML = `${zeroLeft(min)}:${zeroLeft(sec)} | LongBreak`
     }
 
-    
 }
-
-let minutes = 0
-let seconds = 10
-
-let pauseState = false
-let resetState = false
-
-let breakCounter = 2
-
-const headerButttons = appData.headerBtnsBox().querySelectorAll('button')
 
 // Chama a funcao principal
 appData.startBtn().addEventListener('click', function (e) {
@@ -143,7 +224,7 @@ function startTimer() {
                     tradeColors('1')
                     return
                 }
-                
+
 
             }
 
@@ -179,7 +260,7 @@ function startTimer() {
             seconds--
         }
 
-        
+
         updatePageTitle(undefined, minutes, seconds)
         appData.minutesField().innerText = zeroLeft(minutes)
         appData.secondsField().innerText = zeroLeft(seconds)
@@ -208,7 +289,7 @@ function typeOfTimer(types) {
 appData.focusBtn().addEventListener('click', e => {
     playClickSound()
     toggleSelectedClassButtons(appData.focusBtn())
-    changeTime(typeOfTimer(headerButttons))
+    changeTime(typeOfTimer(headerButttons),)
     tradeColors(typeOfTimer(headerButttons))
 })
 
@@ -227,29 +308,6 @@ appData.longBreakBtn().addEventListener('click', e => {
     changeTime(typeOfTimer(headerButttons))
     tradeColors(typeOfTimer(headerButttons))
 })
-
-
-// Arruma o tempo quando clicar nos botoes
-function changeTime(type) {
-    if (type === '0') {
-        minutes = 25
-        seconds = 0
-        setTimer(minutes, seconds)
-    }
-
-    if (type === '1') {
-        minutes = 5
-        seconds = 0
-        setTimer(minutes, seconds)
-    }
-
-    if (type === '2') {
-        minutes = 15
-        seconds = 0
-        setTimer(minutes, seconds)
-    }
-}
-
 
 // Seta o tempo no html
 function setTimer(min, sec) {
@@ -336,9 +394,29 @@ function playTimerSound() {
     })
 }
 
+// Salvar dados no localStorage do navegador
+function saveTimerState() {
+    localStorage.setItem('times', JSON.stringify(timerSettings))
+}
+
+function recoverTimerState() {
+    const times = localStorage.getItem('times')
+
+    if (times) { // se existir no localStorage
+        timerSettings = JSON.parse(times)
+    } else {
+        // primeira vez -> valores padrão
+        timerSettings = {
+            pomodoro: 25,
+            break: 5,
+            longBreak: 15
+        }
+    }
+
+    minutes = timerSettings.pomodoro
+    seconds = 0
+    setTimer(minutes, seconds)
+}
 
 // Proximas funcionaliades:
-
-// dialog do settings
-// guardar informacoes de tempo no localstorage
 // refatorar e debugar

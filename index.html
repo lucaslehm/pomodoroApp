@@ -1,13 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro</title>
     <link rel="stylesheet" href="assets/styles/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
 </head>
+
 <body>
+
+    <dialog class="settings-dialog">
+
+        <div class="settings-box-container">
+
+            <div class="settings-box-header">
+                <p class="settings-title">settings.</p>
+                <div class="back-btn-box">
+                    <i id="backButton" class="ri-arrow-left-s-line"></i>
+                </div>
+            </div>
+
+            <form class="settings-time-container">
+                <p class="settings-sub-title">Tempo (minutos)</p>
+                <div class="settings-time-inputs-container">
+
+                    <div>
+                        <label class="default-settings-label" for="pomodoroTimerSet">Pomodoro</label>
+                        <input class="default-settings-input" type="number" name="name__pomodoro" id="pomodoroTimerSet" placeholder="25">
+                        <p id="pomodoroInputErrMsg" class="error-message" style="display: none;">erro</p>
+                    </div>
+
+                    <div>
+                        <label class="default-settings-label" for="breakTimerSet">Short Break</label>
+                        <input class="default-settings-input" type="number" name="name__break" id="breakTimerSet" placeholder="5">
+                        <p id="breakInputErrMsg" class="error-message" style="display: none;">erro</p>
+                    </div>
+
+                    <div>
+                        <label class="default-settings-label" for="longBreakTimerSet">Long Break</label>
+                        <input class="default-settings-input" type="number" name="name__long__break" id="longBreakTimerSet" placeholder="15">
+                        <p id="longBreakInputErrMsg" class="error-message" style="display: none;">erro</p>
+                    </div>
+
+                </div>
+
+                <button id="updateSettingsButton">Atualizar</button>
+            </form>
+
+        </div>
+
+    </dialog>
 
     <header class="pomodoro-header-conteiner">
         <h1 class="app-title">pomodoro.</h1>
@@ -40,4 +84,5 @@
 
     <script src="assets/scripts/app.js"></script>
 </body>
+
 </html>

@@ -14,6 +14,7 @@
     --cor02: #f0f0f8;
     --cor03: #161631;
     --cor04: #c2c2d8;
+    --cor05: #e03f39;
 }
     
 
@@ -139,6 +140,11 @@ button:active {
     transform: translate(4%, 4%);
 }
 
+.settings-btn-box:active{
+    background-color: var(--cor04);
+    transform: translate(4%, 4%);
+}
+
 
 #minutesTimer,
 #secondsTimer {
@@ -148,4 +154,130 @@ button:active {
 .ri-pause-line {
     font-weight: 900;
     color: var(--cor03);
+}
+
+.settings-dialog {
+    align-items: center;
+    justify-content: center;
+    border: none;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.329);
+}
+
+.settings-box-container {
+    width: 400px;
+    padding: 2em;
+    background-color: var(--cor02);
+    border-radius: 1em;
+    border: solid 3px var(--cor03);
+    box-shadow: 5px 5px 0px var(--cor03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+}
+
+
+.settings-box-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings-title {
+    color: var(--cor03);
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.settings-sub-title {
+    color: var(--cor03);
+    font-size: .9em;
+    font-weight: 700;
+    margin-bottom: 1em;
+}
+
+.back-btn-box {
+    background-color: var(--cor02);
+    padding: .3em;
+    border-radius: .3em;
+    border: solid 2px var(--cor03);
+    box-shadow: 3px 3px 0px var(--cor03);
+    cursor: pointer;
+}
+
+#backButton {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: var(--cor03);
+}
+
+.settings-time-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-time-inputs-container {
+    display: flex;
+    gap: .6em;
+}
+
+.default-settings-label {
+    color: var(--cor03);
+    font-size: .8em;
+    font-weight: bold;
+}
+
+.default-settings-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background-color: var(--cor04);
+    color: var(--cor03);
+    padding: 1em;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: .5em;
+}
+
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+#updateSettingsButton {
+    margin-top: 1.5em;
+    align-self: flex-end;
+    color: var(--cor03);
+    border: none;
+    outline: none;
+    font-size: .9em;
+    font-weight: 600;
+    padding: .5em 2em;
+    background-color: var(--cor02);
+    border-radius: .5em;
+    border: solid 2px var(--cor03);
+    box-shadow: 3px 3px 0px var(--cor03);
+    cursor: pointer;
+}
+
+#updateSettingsButton:active {
+    background-color: var(--cor04);
+}
+
+.error-message {
+    margin-left: .3em;
+    font-style: italic;
+    font-weight: bold;
+    font-size: .8em;
+    color: var(--cor05);
 }
